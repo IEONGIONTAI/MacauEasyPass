@@ -27,11 +27,15 @@ extension String {
 
 struct MockTestView: View {
     let mockTestType: String
-    @State var isSelected: Bool? = nil
+    @ObservedObject var adManager = InterstitialAdManager()
     @ObservedObject var apiFetcher = APIFetcher()
-    @State var questionNum : Int = 0
+    
+    @State var isSelected: Bool? = nil
     @State var isFinished: Bool? = nil
     
+    @State private var hasFetchedData: Bool = false
+    
+    @State var questionNum : Int = 0
     @State var correctCount : Int = 0
     
     var body: some View {
@@ -74,6 +78,11 @@ struct MockTestView: View {
                             .onTapGesture {
                                 questionNum += 1
                                 isSelected = nil
+                                if adManager.isAdLoaded && questionNum%3 == 0 {  // 確保廣告已經加載完成
+                                    adManager.showAd()
+                                } else {
+                                    print("Ad is not loaded yet.")
+                                }
                             }
                         }else if questionNum+1 == data.count && isSelected == true{
                             ZStack() {
@@ -106,11 +115,11 @@ struct MockTestView: View {
                     LoadingView()
                 }
             }.onAppear(perform: {
-                apiFetcher.fetchDataForType(mockTestType)
+                if !hasFetchedData {
+                    apiFetcher.fetchDataForType(mockTestType)
+                    hasFetchedData = true
+                }
             })
-            .onDisappear{
-                apiFetcher.freeData()
-            }
         }else if isFinished == true {
             ScoreSummaryView(userScore: Int((Double(correctCount) / Double(questionNum+1)) * 100), correctQuestions: correctCount, totalQuestions: questionNum+1)
 
