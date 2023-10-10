@@ -14,3 +14,6 @@ MacauEasyPass 是一款專為澳門公務員考試準備而設的應用程式。
 App store上架需要99 usd
 ADMob 要100usd才能領錢...
 放棄在[上架]這步
+
+![App preview](https://imgur.com/a/UhBeVuZ)
+![App preview](https://imgur.com/Taw4cdc)
